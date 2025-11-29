@@ -70,7 +70,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: f1a110d32af21aa4d872c707dfcc6043, type: 2}
+  - {fileID: 2100000, guid: a23d1b0dc553640f682d502af95e7789, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -175,4 +175,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83b1872d34c2946fbaad68e474e244ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PickUpBatter
+  batterColor: {r: 0.627451, g: 0.3215686, b: 0.1764706, a: 1}
   spawner: {fileID: 0}

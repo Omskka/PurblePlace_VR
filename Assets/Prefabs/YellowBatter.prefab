@@ -175,4 +175,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83b1872d34c2946fbaad68e474e244ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PickUpBatter
+  batterColor: {r: 1, g: 0.8431373, b: 0, a: 1}
   spawner: {fileID: 0}
