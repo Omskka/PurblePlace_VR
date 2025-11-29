@@ -7,22 +7,19 @@ public class PickUpTray : MonoBehaviour
     private Transform holdPoint;
     private Rigidbody rb;
 
-    // Reference to spawner
     public TraySpawner spawner;
-
-    // All tray colliders in the scene
     private Collider[] allTrayColliders;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
 
-        // create a hold point in front of the camera
+        // Hold point in front of camera
         holdPoint = new GameObject("HoldPoint").transform;
         holdPoint.position = Camera.main.transform.position + Camera.main.transform.forward * 2f;
         holdPoint.SetParent(Camera.main.transform);
 
-        // find all trays in the scene and store their colliders
+        // Cache all trays for collision ignoring
         Tray[] trays = FindObjectsOfType<Tray>();
         allTrayColliders = new Collider[trays.Length];
         for (int i = 0; i < trays.Length; i++)
@@ -34,7 +31,9 @@ public class PickUpTray : MonoBehaviour
     void Update()
     {
         if (isHeld)
+        {
             transform.position = holdPoint.position;
+        }
 
         if (Mouse.current.leftButton.wasPressedThisFrame)
         {
@@ -48,14 +47,11 @@ public class PickUpTray : MonoBehaviour
                     isHeld = true;
                     rb.isKinematic = true;
 
-                    // ignore collisions with other trays while held
+                    // Ignore collisions while held
                     foreach (var col in allTrayColliders)
-                    {
                         if (col != GetComponent<Collider>())
                             Physics.IgnoreCollision(GetComponent<Collider>(), col, true);
-                    }
 
-                    // spawn a new tray at the spawner
                     if (spawner != null)
                         spawner.SpawnNewTray();
                 }
@@ -66,11 +62,31 @@ public class PickUpTray : MonoBehaviour
                 isHeld = false;
                 rb.isKinematic = false;
 
-                // re-enable collisions with other trays
+                // Re-enable collisions
                 foreach (var col in allTrayColliders)
-                {
                     if (col != GetComponent<Collider>())
                         Physics.IgnoreCollision(GetComponent<Collider>(), col, false);
+
+                // --- SNAP LOGIC ---
+                TraySnapPoint[] snapPoints = FindObjectsOfType<TraySnapPoint>();
+                TraySnapPoint closestSnap = null;
+                float closestDist = Mathf.Infinity;
+
+                foreach (var snap in snapPoints)
+                {
+                    float dist = Vector3.Distance(transform.position, snap.transform.position);
+                    if (dist < closestDist)
+                    {
+                        closestDist = dist;
+                        closestSnap = snap;
+                    }
+                }
+
+                // Snap if within 1 unit (adjust if needed)
+                if (closestSnap != null && closestDist <= 1f)
+                {
+                    closestSnap.SnapTray(gameObject);
+                    rb.isKinematic = true; // keep it fixed
                 }
             }
         }
