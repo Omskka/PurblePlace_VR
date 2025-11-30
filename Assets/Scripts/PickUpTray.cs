@@ -4,6 +4,8 @@ using UnityEngine.InputSystem;
 public class PickUpTray : MonoBehaviour
 {
     private bool isHeld = false;
+    private bool hasSpawnedReplacement = false;   // <-- FIX HERE
+
     private Transform holdPoint;
     private Rigidbody rb;
     public TraySpawner spawner;
@@ -57,8 +59,15 @@ public class PickUpTray : MonoBehaviour
                         if (col != GetComponent<Collider>())
                             Physics.IgnoreCollision(GetComponent<Collider>(), col, true);
 
-                    if (spawner != null)
-                        spawner.SpawnNewTray();
+                    // -------------------------------
+                    // FIX: spawn only ONCE per tray
+                    // -------------------------------
+                    if (!hasSpawnedReplacement)
+                    {
+                        hasSpawnedReplacement = true;
+                        if (spawner != null)
+                            spawner.SpawnNewTray();
+                    }
                 }
             }
             else if (isHeld)
@@ -71,7 +80,6 @@ public class PickUpTray : MonoBehaviour
                     if (col != GetComponent<Collider>())
                         Physics.IgnoreCollision(GetComponent<Collider>(), col, false);
 
-                // --- NEW SNAP LOGIC ---
                 SnapToClosestPoint();
             }
         }
@@ -93,7 +101,7 @@ public class PickUpTray : MonoBehaviour
             }
         }
 
-        if (closest != null && minDist <= 1f) // 1f = snap radius, adjust as needed
+        if (closest != null && minDist <= 1f)
         {
             closest.SnapTray(gameObject);
         }
